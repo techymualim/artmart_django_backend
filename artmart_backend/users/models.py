@@ -1,9 +1,8 @@
-
 from typing import ClassVar
 
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField
-from django.db.models import EmailField
+from django.db.models import CharField, EmailField, TextField, DateTimeField
+
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -17,12 +16,30 @@ class User(AbstractUser):
     check forms.SignupForm and forms.SocialSignupForms accordingly.
     """
 
-    # First and last name do not cover name patterns around the globe
-    name = CharField(_("Name of User"), blank=True, max_length=255)
+    # # First and last name do not cover name patterns around the globe
+    # name = CharField(_("Name of User"), blank=True, max_length=255)
+    # first_name = None  # type: ignore[assignment]
+    # last_name = None  # type: ignore[assignment]
+    # email = EmailField(_("email address"), unique=True)
+    # username = None  # type: ignore[assignment]
+
+    # USERNAME_FIELD = "email"
+    # REQUIRED_FIELDS = []
+    username = None  # type: ignore[assignment]
     first_name = None  # type: ignore[assignment]
     last_name = None  # type: ignore[assignment]
+    name = CharField(_("Name of User"), blank=True, max_length=255)
     email = EmailField(_("email address"), unique=True)
-    username = None  # type: ignore[assignment]
+    
+    phone_number=CharField(_("phone_number"), max_length=255,null=True)
+    user_role = CharField(
+        _("user role"),
+        max_length=50,
+        choices=[("ADMIN", "Admin"), ("SELLER", "Seller"), ("BUYER", "Buyer")],
+    )
+   
+    registration_date = DateTimeField(_("registration date"), auto_now_add=True)
+    
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
