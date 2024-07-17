@@ -5,6 +5,33 @@ from pathlib import Path
 
 import environ
 
+# settings.py
+
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+
+UNFOLD = {
+    "SITE_TITLE": "Artmart",
+    "SITE_HEADER": "Artmart",
+   
+    # "SITE_ICON": lambda request: static("icon.svg"),  # both modes, optimise for 32px height
+    "SITE_ICON": {
+       "light": lambda request: "https://artmart-ar-models.s3.amazonaws.com/white.svg",  # light mode
+        "dark": lambda request:"https://artmart-ar-models.s3.amazonaws.com/black.svg",
+    },
+    # "SITE_LOGO": lambda request: static("logo.svg"),  # both modes, optimise for 32px height
+    "SITE_LOGO": {
+        "light": lambda request: "https://artmart-ar-models.s3.amazonaws.com/white.svg",  # light mode
+        "dark": lambda request:"https://artmart-ar-models.s3.amazonaws.com/black.svg",
+    }
+      
+}
+
+
+
+
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # artmart_backend/
 APPS_DIR = BASE_DIR / "artmart_backend"
@@ -85,7 +112,14 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
-    "django.contrib.admin",
+    "unfold",  # before django.contrib.admin
+    "unfold.contrib.filters",  # optional, if special filters are needed
+    "unfold.contrib.forms",  # optional, if special form elements are needed
+    "unfold.contrib.inlines",  # optional, if special inlines are needed
+    "unfold.contrib.import_export",  # optional, if django-import-export package is used
+    "unfold.contrib.guardian",  # optional, if django-guardian package is used
+    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
+    "django.contrib.admin", 
     "django.forms",
 ]
 THIRD_PARTY_APPS = [
