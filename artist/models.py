@@ -1,5 +1,27 @@
 from django.db import models
 from artmart_backend.users.models import User
+import os
+from django.core.exceptions import ValidationError
+
+def validate_file_type(value):
+    
+    valid_extensions = ['.glb', '.gltf']  # Add valid extensions
+    ext = os.path.splitext(value.name)[1]
+    if ext.lower() not in valid_extensions:
+        raise ValidationError('Unsupported file extension.')
+    
+   
+    
+def validate_image_file_type(value):
+    valid_image_mime_types = ['image/jpeg', 'image/png']  # Add valid MIME types
+    valid_image_extensions = ['.jpg', '.jpeg', '.png']  # Add valid extensions
+    ext = os.path.splitext(value.name)[1]
+    if ext.lower() not in valid_image_extensions:
+        raise ValidationError('Unsupported image file extension.')
+    
+    # Optionally check the MIME type if needed
+    if value.file.content_type not in valid_image_mime_types:
+        raise ValidationError('Unsupported image file type.')
 
 class Details(models.Model):
     SHOP_TYPE_CHOICES = [
@@ -35,13 +57,25 @@ class Details(models.Model):
     def __str__(self):
         return self.store_name
     
+
+    
 class Product(models.Model):
+    
+    PRODUCT_CHOICES = [
+        ('PAINTING', 'Painting'),
+        ('JEWELLERY', 'Jewellery'),
+        ('POTTERY', 'Pottery'),
+        ('DECORATION', 'Decoration')
+    ]
+    
     artist = models.ForeignKey(Details, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     upload_date_time = models.DateTimeField(auto_now_add=True)
-    ar_model_ref = models.FileField()
+    ar_model_ref = models.FileField(upload_to='ar_models/', validators=[validate_file_type])
+    ar_model_image = models.ImageField(upload_to='ar_model_images/', validators=[validate_image_file_type])
+    category=models.CharField(max_length=255,choices=PRODUCT_CHOICES,default="PAINTING")
     
     AVAILABILITY_CHOICES = [
         ('Available', 'Available'),
